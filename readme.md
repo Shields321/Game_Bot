@@ -2,6 +2,7 @@
 this code will eventually be used to auto in different games some of the games im starting to implement are autos for fate grand order and Arknights
 
 # Fate/Grand order
+the first thing i should say is that this will obviously not work on phones its ment to be used on a emulator or a screen mirror
 for fate grand order i plan to make it so that it will see what characters you have set up and use the skills to 3 turn the waves
 
 # Arknights
