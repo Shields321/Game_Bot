@@ -1,6 +1,6 @@
 use minifb::{Key, MouseMode, MouseButton, Window, WindowOptions};
 use std::thread;
-use crate::games::arknights::screen_capture;
+use crate::games::screen_capture::screen_capture;
 
 const FONT: [[u8; 8]; 128] = {
     let mut font = [[0u8; 8]; 128];
@@ -125,7 +125,7 @@ fn draw_text(buffer: &mut [u32], width: usize, x: usize, y: usize, text: &str, c
     }
 }
 
-pub fn create_gui(buttons: &[(usize, usize, usize, usize, &str)]){
+pub fn create_gui<'a>(buttons: &'a [(usize, usize, usize, usize, &'a str)])-> Option<&'a str> {
     const WIDTH: usize = 640;
     const HEIGHT: usize = 360;    
     // Create a window
@@ -177,14 +177,17 @@ pub fn create_gui(buttons: &[(usize, usize, usize, usize, &str)]){
             if inside_button && mouse_down {
                 if text.to_lowercase() == "fgo"{
                     println!("{} button was pressed", text);
+                    return Some(text);
                 }
                 else if text.to_lowercase() =="arknights"{
                     thread::spawn(move || {
                         screen_capture();
                     });
+                    return Some(text);
                 }
                 else if text.to_lowercase() == "overwatch" {
                     println!("{} button was pressed", text);
+                    return Some(text);
                 }                               
             }
             // Draw text
@@ -196,6 +199,6 @@ pub fn create_gui(buttons: &[(usize, usize, usize, usize, &str)]){
         
         // Update the window
         window.update_with_buffer(&buffer, WIDTH, HEIGHT).unwrap();        
-    }    
-    /* `std::string::String` value */    
+    }  
+    None         
 }

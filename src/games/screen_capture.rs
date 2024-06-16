@@ -1,10 +1,11 @@
 use std::io::{BufRead, BufReader};
 use std::process::{Command, Stdio};
 use serde_json::Value;
-
+use crate::games::overwatch::movement;
 
 pub fn screen_capture() {
     // Spawn the Python process
+    print!("starting capture");
     let mut child = Command::new("python")
         .arg("screen_capture.py")
         .stdout(Stdio::piped())
@@ -18,8 +19,7 @@ pub fn screen_capture() {
     let reader = BufReader::new(stdout);
     for line in reader.lines() {
         match line {
-            Ok(data) => {
-                println!("Received data from Python: {}", data);
+            Ok(data) => {                
                 process_data(&data);
             }
             Err(e) => eprintln!("Failed to read line from pipe: {}", e),
@@ -34,18 +34,25 @@ fn process_data(data: &str) {
     // Parse the JSON data
     match serde_json::from_str::<Value>(data) {
         Ok(json_data) => {
-            if let Some(detected_text) = json_data["detected_text"].as_str() {
-                println!("Detected Text: {}", detected_text);
+            if let Some(movement_detected) = json_data["movement_detected"].as_bool() {
+                //value is always false
+                if movement_detected{
+                    println!("Movement Detected!");
+                    movement();                                                        
+                }
+                else{
+                    println!("No Movement Detected!");
+                }
+                //println!("Detected Text: {}", detected_text);
 
-                // Pass the parsed data to the recording function
-                record_monitor(detected_text.to_string());
+                
             }
         }
         Err(e) => eprintln!("Failed to parse JSON: {}", e),
     }
 }
 
-fn record_monitor(detected_text: String) {
+fn _record_monitor(detected_text: String) {
     // Process the received data as needed
     // For example, you can use the data to control the game recording logic
     println!("Recording game with Detected Text: {}", detected_text);
