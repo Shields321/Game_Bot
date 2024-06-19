@@ -4,6 +4,7 @@ use std::time::Duration;
 use std::io;
 
 use game_capture::capture::return_game_name;
+use games::fgo::start_fgo;
 use gui::gui::create_gui;
 
 use games::screen_capture::screen_capture;
@@ -13,8 +14,8 @@ mod game_capture;
 mod games;
 
 fn main() {
-    return_game_name();
-
+    return_game_name();  
+          
     // Atomic flag to control the running state
     let running = Arc::new(AtomicBool::new(true));
 
@@ -40,7 +41,7 @@ fn main() {
 
     let mut game_selected = true;
     while game_selected {
-        let game = create_gui(buttons);
+        let game = create_gui(buttons);        
         if game.unwrap() == "Overwatch" {
             // Spawn the key press thread for Overwatch
             let key_running = Arc::clone(&running);
@@ -62,7 +63,11 @@ fn main() {
             // Wait for the key press thread to finish
             key_press_handle.join().unwrap();
             game_selected = false;
-        } else {
+        } if game.unwrap() =="FGO"{
+            start_fgo();
+            game_selected = false;
+        }
+        else {
             println!("Selected game: {}", game.unwrap());
             continue;
         }

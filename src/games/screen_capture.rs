@@ -43,17 +43,8 @@ fn process_data(data: &str) {
                 else{
                     println!("No Movement Detected!");
                 }
-                //println!("Detected Text: {}", detected_text);
-
-                
             }
         }
         Err(e) => eprintln!("Failed to parse JSON: {}", e),
     }
-}
-
-fn _record_monitor(detected_text: String) {
-    // Process the received data as needed
-    // For example, you can use the data to control the game recording logic
-    println!("Recording game with Detected Text: {}", detected_text);
 }

@@ -14,7 +14,7 @@ lazy_static! {
     static ref ENIGO: Arc<Mutex<Enigo>> = Arc::new(Mutex::new(Enigo::new(&Settings::default()).unwrap())); 
 }
 pub fn movement(){  
-    
+    //sleep before doing anything to let the user go back into the game
     thread::sleep(Duration::from_secs(5));    
     //key w is pressed
     let enigo_clone = Arc::clone(&ENIGO);
@@ -26,26 +26,13 @@ pub fn movement(){
     key_press('w',&mut *enigo);   
     thread::sleep(Duration::from_secs(1));    
     key_release('w',&mut *enigo); 
-        
-    /*key_press('s',&mut *enigo);   
-    thread::sleep(Duration::from_secs(1));    
-    key_release('s',&mut *enigo); 
-        
-    key_press('a',&mut *enigo);   
-    thread::sleep(Duration::from_secs(1));    
-    key_release('a',&mut *enigo); 
-        
-    key_press('d',&mut *enigo);   
-    thread::sleep(Duration::from_secs(1));    
-    key_release('d',&mut *enigo); 
-    */ 
+            
     key_press(' ',&mut *enigo);   
     thread::sleep(Duration::from_secs(1));
     key_release(' ',&mut *enigo); 
 
-    /*left_click(&mut *enigo);
-    thread::sleep(Duration::from_secs(1));
-    left_click_release(&mut *enigo);*/
+    left_click(&mut *enigo);
+    thread::sleep(Duration::from_secs(1));    
        
 }
 fn key_press(key: char, enigo: &mut Enigo) {    
@@ -63,9 +50,4 @@ fn turn_screen(enigo: Arc<Mutex<Enigo>>){
         enigo.move_mouse(100, 0, Rel).unwrap();
         thread::sleep(Duration::from_millis(500)); 
     }
-}
-fn _loop_till_change(key: char, enigo: &mut Enigo){
-    //will use the game_capture functions to change the key state 
-    //example: constantly take screen shots of the game and check for changes
-    //if there is no change then walk an a different direction
 }
