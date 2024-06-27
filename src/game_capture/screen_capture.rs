@@ -5,7 +5,7 @@ use crate::games::overwatch::movement;
 
 pub fn screen_capture() {
     // Spawn the Python process
-    print!("starting capture");
+    println!("starting capture");
     let mut child = Command::new("python")
         .arg("screen_capture.py")
         .stdout(Stdio::piped())

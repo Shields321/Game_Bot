@@ -6,8 +6,7 @@ use std::io;
 use game_capture::capture::return_game_name;
 use games::fgo::start_fgo;
 use gui::gui::create_gui;
-
-use games::screen_capture::screen_capture;
+use game_capture::screen_capture::screen_capture;
 
 mod gui;
 mod game_capture;
@@ -18,15 +17,6 @@ fn main() {
           
     // Atomic flag to control the running state
     let running = Arc::new(AtomicBool::new(true));
-
-    // Clone the flag for the screen capture thread
-    let screen_running = Arc::clone(&running);
-    let screen_capture_handle = thread::spawn(move || {
-        while screen_running.load(Ordering::SeqCst) {
-            screen_capture();
-            thread::sleep(Duration::from_millis(100));
-        }
-    });
 
     let x_positions = [100, 250, 400];
     let y_positions = [100, 100, 100];
@@ -44,10 +34,10 @@ fn main() {
         let game = create_gui(buttons);        
         if game.unwrap() == "Overwatch" {
             // Spawn the key press thread for Overwatch
-            let key_running = Arc::clone(&running);
-            let key_press_handle = thread::spawn(move || {
-                while key_running.load(Ordering::SeqCst) {
-                    //use games::overwatch::movement;
+            let screen_running = Arc::clone(&running);
+            let screen_capture_handle = thread::spawn(move || {
+                while screen_running.load(Ordering::SeqCst) {
+                    screen_capture();
                     thread::sleep(Duration::from_millis(100));
                 }
             });
@@ -61,21 +51,19 @@ fn main() {
             running.store(false, Ordering::SeqCst);
 
             // Wait for the key press thread to finish
-            key_press_handle.join().unwrap();
+            // Wait for the screen capture thread to finish
+            match screen_capture_handle.join() {
+                Ok(_) => println!("Screen capture finished"),
+                Err(e) => eprintln!("Screen capture thread panicked: {:?}", e),
+            }
             game_selected = false;
+
         } if game.unwrap() =="FGO"{
-            start_fgo();
-            game_selected = false;
+            game_selected = start_fgo();            
         }
         else {
             println!("Selected game: {}", game.unwrap());
             continue;
         }
-    }
-
-    // Wait for the screen capture thread to finish
-    match screen_capture_handle.join() {
-        Ok(_) => println!("Screen capture finished"),
-        Err(e) => eprintln!("Screen capture thread panicked: {:?}", e),
-    }
+    }    
 }

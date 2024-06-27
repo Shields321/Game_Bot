@@ -12,19 +12,17 @@ pub struct WindowInfo<'a> {
 }
 
 impl<'a> WindowInfo<'a> {
-    pub fn focus_and_fullscreen_window(title: Option<&'a str>, class_name: Option<&'a str>) {
+    pub fn focus_and_fullscreen_window(title: Option<&'a str>, class_name: Option<&'a str>) -> Self {
         let mut info = WindowInfo { title, class_name, hwnd: None };
-
+        
         unsafe {
             // First attempt: Find window by title
-            EnumWindows(Some(Self::enum_windows_callback_title), &mut info as *mut WindowInfo as LPARAM);
-            
+            EnumWindows(Some(Self::enum_windows_callback_title), &mut info as *mut WindowInfo as LPARAM);            
             // If not found by title, attempt to find by class name
             if info.hwnd.is_none() && info.class_name.is_some() {
                 EnumWindows(Some(Self::enum_windows_callback_class), &mut info as *mut WindowInfo as LPARAM);
-            }
+            }            
         }
-
         if let Some(hwnd) = info.hwnd {
             unsafe {
                 // Maximize the window
@@ -34,8 +32,10 @@ impl<'a> WindowInfo<'a> {
             }
             println!("Found and maximized window.");
         } else {
-            println!("Window not found.");
+            println!("Window not found.");              
         }
+
+        info
     }
 
     unsafe extern "system" fn enum_windows_callback_title(hwnd: HWND, info_ptr: LPARAM) -> i32 {

@@ -1,6 +1,4 @@
 use minifb::{Key, MouseMode, MouseButton, Window, WindowOptions};
-use std::thread;
-use crate::games::screen_capture::screen_capture;
 
 const FONT: [[u8; 8]; 128] = {
     let mut font = [[0u8; 8]; 128];
@@ -179,10 +177,8 @@ pub fn create_gui<'a>(buttons: &'a [(usize, usize, usize, usize, &'a str)])-> Op
                     println!("{} button was pressed", text);
                     return Some(text);
                 }
-                else if text.to_lowercase() =="arknights"{
-                    thread::spawn(move || {
-                        screen_capture();
-                    });
+                else if text.to_lowercase() =="arknights"{  
+                    println!("{} button was pressed", text);                 
                     return Some(text);
                 }
                 else if text.to_lowercase() == "overwatch" {
